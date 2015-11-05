@@ -46,7 +46,7 @@ object SPM extends JFXApp {
     }
     title = "Software Project Management"
     scene = new Scene(800, 600) {
-      root = new VBox {
+      root = new VBox { _root =>
         spacing = 10
         padding = Insets(20)
         alignment = Pos.Center
@@ -76,18 +76,21 @@ object SPM extends JFXApp {
             maxWidth = 250
             onAction = (ae: ActionEvent) => {
               progressBar.visible = true
+              _root.disable = true
               implicit val ec = ExecutionContext.global
-              val passwordQuery: Future[String] = Future(DB.checkPassword(usernameField.text.value))
+              val passwordQuery: Future[String] = Future(DB.checkPassword(usernameField.text.value.toLowerCase))
 
               passwordQuery.onSuccess {
                 case password =>
                   if (password == passwordField.text.value) root = chooseProject
                   else {
                     val msg: String = if (password == null) "That username doesnt exist"
-                    else "Please re-enter your password"
+                    else "Your password is incorrect. Please re-enter your password"
                     Platform.runLater {
                       errorLabel.text = msg
+                      passwordField.text = ""
                       progressBar.visible = false
+                      _root.disable = false
                     }
                   }
               } // query on success
