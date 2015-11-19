@@ -1,5 +1,7 @@
 import scenes._
 
+import scalafx.scene.Scene
+
 /**
   * @author emiliocornejo
   * @version 06/11/15
@@ -7,7 +9,10 @@ import scenes._
   */
 object Session {
 
-  def apply(name: String, admin: Boolean) = {
-    chooseProject(name)
+  def apply(name: String, isAdmin: Boolean): Scene = {
+    if (isAdmin) {
+
+    }
+    ChooseProject(name)
   }
 }

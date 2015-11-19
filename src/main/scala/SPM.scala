@@ -1,5 +1,4 @@
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Failure}
 import scalafx.Includes._
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
@@ -20,8 +19,13 @@ import scalafx.scene.text.{Font, FontWeight}
   */
 object SPM extends JFXApp {
 
-
-  stage = View.login
+  /*
+  * Primary stage: Log in
+  * */
+  stage = new PrimaryStage {
+    title = "Software Project Management"
+    scene = View.sc
+  }
 
   object View {
     // error message hidden
@@ -91,47 +95,39 @@ object SPM extends JFXApp {
               val f: Future[(String, Boolean)] = Future(
                 DB.login(username)
               )
-              f.onComplete {
-                case Success(password, admin) => {
-                  println(s"$password and $admin")
-                  if (password == passwordField.text.value) {
-                    Platform.runLater {
-                      stage.hide()
-                      stage.scene = Session(username, admin)
-                      stage.title = "Choose Project"
-                      stage.show()
+              f.onSuccess { case passwordAdmin => {
+                if (passwordAdmin != null) {
+                  val (password, admin) = (passwordAdmin._1, passwordAdmin._2)
 
-                    }
+                  println(s"$passwordAdmin and $admin")
+                  if (password == passwordField.text.value) Platform.runLater {
+                    stage.hide()
+                    stage.scene = Session(username, admin)
+                    stage.title = "Choose Project"
+                    stage.show()
                   }
-                  else {
-                    val msg: String = if (password == null) "That username doesnt exist"
-                    else "Your password is incorrect. Please re-enter your password"
-                    Platform.runLater {
-                      msgLabel.text = msg
-                      passwordField.text = ""
-                      progressBar.visible = false
-                      _root.disable = false
-                    }
+                  else Platform.runLater {
+                    msgLabel.text = "Your password is incorrect. Please re-enter your password"
+                    passwordField.text = ""
+                    progressBar.visible = false
+                    _root.disable = false
                   }
+                } else Platform.runLater {
+                  msgLabel.text = "That username doesnt exist"
+                  passwordField.text = ""
+                  progressBar.visible = false
+                  _root.disable = false
                 }
-                case Failure(e) => {
-
-                }
-
+              }
               } // query on success
             } // button action event
           }
         ) // children list
       } // root
-    } // scene
 
-    /*
-* Primary stage: Log in
-* */
-    val login = new PrimaryStage {
-      title = "Software Project Management"
-      scene = sc
-    }
+    } // scene
   }
+
+  // object View
 
 }
