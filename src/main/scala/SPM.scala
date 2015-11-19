@@ -1,4 +1,5 @@
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Failure}
 import scalafx.Includes._
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
@@ -62,7 +63,8 @@ object SPM extends JFXApp {
       font = Font.font("Helvetica", FontWeight.Thin, 18)
     }
     val sc: Scene = new Scene(600, 600) {
-      root = new VBox { _root =>
+      root = new VBox {
+        _root =>
         spacing = 10
         padding = Insets(20)
         alignment = Pos.Center
@@ -86,15 +88,16 @@ object SPM extends JFXApp {
               val username = usernameField.text.value.toLowerCase
               // get user password from database through future
               implicit val ec = ExecutionContext.global
-              val passwordQuery: Future[String] = Future(
-                DB.checkPassword(username)
+              val f: Future[(String, Boolean)] = Future(
+                DB.login(username)
               )
-              passwordQuery.onSuccess {
-                case password =>
+              f.onComplete {
+                case Success(password, admin) => {
+                  println(s"$password and $admin")
                   if (password == passwordField.text.value) {
                     Platform.runLater {
                       stage.hide()
-                      stage.scene = Session.user(username)
+                      stage.scene = Session(username, admin)
                       stage.title = "Choose Project"
                       stage.show()
 
@@ -110,6 +113,11 @@ object SPM extends JFXApp {
                       _root.disable = false
                     }
                   }
+                }
+                case Failure(e) => {
+
+                }
+
               } // query on success
             } // button action event
           }
@@ -125,4 +133,5 @@ object SPM extends JFXApp {
       scene = sc
     }
   }
+
 }

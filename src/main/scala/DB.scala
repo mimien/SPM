@@ -7,16 +7,18 @@ import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
- * @author emiliocornejo
- * @version 02/11/15
- *          @(#)DB.scala
- */
+  * @author emiliocornejo
+  * @version 02/11/15
+  *          @(#)DB.scala
+  */
 object DB {
   val dbConfig = DatabaseConfig.forConfig[JdbcProfile]("postgres")
 
   val db = dbConfig.db
 
-  import dbConfig.driver.api._  // imports all the DSL goodies for the configured database
+  import dbConfig.driver.api._
+
+  // imports all the DSL goodies for the configured database
 
   val users = TableQuery[Users] // query interface for Users table
 
@@ -27,20 +29,21 @@ object DB {
     names.intersect(tables.map(_.name.name)) == names
   }
   val create: DBIO[Unit] = (users.schema ++ projects.schema).create
-  val insertUsers: DBIO[Option[Int]] = users.map(u => (u.name, u.password)) ++= Seq(("emilio", "cornejo"), ("admin", "root"))
+  val insertUsers = users.map { u => (u.name, u.password, u.admin) } ++= Seq(("emilio", "cornejo", true), ("admin", "root", true))
   val createIfNotExist = tablesExist.flatMap(exist => if (!exist) create else DBIO.successful())
   val listUsers: DBIO[Seq[String]] = users.map(_.name).result
   val future = db.run(listUsers)
 
-  def await[T](a: Awaitable[T])(implicit ec: ExecutionContext) = Await.result(a, Duration.Inf)
   def awaitAndPrint[T](a: Awaitable[T])(implicit ec: ExecutionContext) = println(await(a))
 
+  def await[T](a: Awaitable[T])(implicit ec: ExecutionContext) = Await.result(a, Duration.Inf)
 
-  def checkPassword(name: String) = {
-    // SELECT password FROM users WHERE name == (name input)
-    val query = users.filter(_.name === name).map(_.password)
+  // return password and admin boolean of given username
+  def login(name: String): (String, Boolean) = {
+    // SELECT (password, admin) FROM users WHERE name == (name input)
+    val query = users.filter(_.name === name).map { u => (u.password, u.admin) }
     val action = query.result
-    val future: Future[Seq[String]] = db.run(action)
+    val future: Future[Seq[(String, Boolean)]] = db.run(action)
     await(future).headOption.orNull
   }
 

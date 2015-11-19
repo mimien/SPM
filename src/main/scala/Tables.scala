@@ -9,22 +9,23 @@ import DB.dbConfig.driver.api._
  */
 
 
-case class User(id: Int, name: String, password: String)
+case class User(id: Int, name: String, password: String, admin: Boolean)
 
 class Users(tag: Tag) extends Table[User](tag, "USERS") {
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
-  def * = (id, name, password) <>(User.tupled, User.unapply)
+  def * = (id, name, password, admin) <>(User.tupled, User.unapply)
 
   // Auto Increment the id primary key column
   def id: Rep[Int] = column[Int]("ID", O.PrimaryKey, O.AutoInc)
 
-  // The name can't be null
-  def name: Rep[String] = column[String]("NAME")
+  def name: Rep[String] = column[String]("NAME") // can't be null
 
   def password: Rep[String] = column[String]("PASSWORD")
-}
 
+  def admin: Rep[Boolean] = column[Boolean]("ADMIN") // true if it has admin privileges
+
+}
 
 case class Project(id: Int, name: String)
 
