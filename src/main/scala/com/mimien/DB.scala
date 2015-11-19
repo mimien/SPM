@@ -1,3 +1,5 @@
+package com.mimien
+
 import slick.backend.DatabaseConfig
 import slick.driver.JdbcProfile
 import slick.jdbc.meta.MTable
@@ -5,7 +7,6 @@ import slick.jdbc.meta.MTable
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
-
 /**
   * @author emiliocornejo
   * @version 02/11/15

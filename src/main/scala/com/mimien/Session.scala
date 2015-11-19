@@ -1,7 +1,8 @@
+package com.mimien
+
 import scenes._
 
 import scalafx.scene.Scene
-
 /**
   * @author emiliocornejo
   * @version 06/11/15

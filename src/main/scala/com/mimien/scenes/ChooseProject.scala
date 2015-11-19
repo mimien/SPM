@@ -1,4 +1,4 @@
-package scenes
+package com.mimien.scenes
 
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
@@ -9,8 +9,7 @@ import scalafx.event.ActionEvent
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
 import scalafx.scene.control._
-import scalafx.scene.input.KeyCombination
-import scalafx.scene.layout.{StackPane, BorderPane, VBox}
+import scalafx.scene.layout.{BorderPane, StackPane, VBox}
 import scalafx.scene.text.Font
 
 /**
@@ -18,36 +17,11 @@ import scalafx.scene.text.Font
   * @version 06/11/15
   *          @(#)Session.scala
   */
-object chooseProject {
-  def apply(name: String): Scene = {
-
-    // menu lists: File, Edit
-    val fileMenu = new Menu("File") {
-      items = List(
-        new MenuItem("New Project") {
-          accelerator = KeyCombination.keyCombination("Ctrl +N")
-          onAction = { (e: ActionEvent) => {
-          }
-          }
-        }
-      )
-    }
-
-    val editMenu = new Menu("Edit") {
-      items = List(
-        new MenuItem("Cut"),
-        new MenuItem("Copy"),
-        new MenuItem("Paste")
-      )
-    }
-
-    val createMenus = new MenuBar {
-      useSystemMenuBar = true
-      menus = List(fileMenu, editMenu)
-    }
+object ChooseProject {
+  def apply(user: String): Scene = {
 
     val welcomeLabel = new Label {
-      text = s"Welcome $name!"
+      text = s"Welcome $user!"
       font = new Font("Helvetica", 22)
     }
 
@@ -66,8 +40,8 @@ object chooseProject {
     }
 
     val startPjBtn = new Button("Start") {
-      onAction = {
-        e: ActionEvent => println(e.eventType + " occurred on Button")
+      onAction = { e: ActionEvent =>
+        println(e.eventType + " occurred on Button")
       }
     }
 
@@ -78,9 +52,7 @@ object chooseProject {
 
     new Scene(800, 600) {
       root = new BorderPane {
-        top = new VBox {
-          children = createMenus
-        }
+        top = new VBox(children = Create.menus)
         center = centerPane
       }
     }

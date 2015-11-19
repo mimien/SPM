@@ -1,3 +1,5 @@
+package com.mimien
+
 import scala.concurrent.{ExecutionContext, Future}
 import scalafx.Includes._
 import scalafx.application.JFXApp.PrimaryStage
@@ -10,7 +12,6 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color
 import scalafx.scene.text.{Font, FontWeight}
-
 
 /**
   * @author emiliocornejo
@@ -66,6 +67,7 @@ object SPM extends JFXApp {
       text = "Sign in to get started"
       font = Font.font("Helvetica", FontWeight.Thin, 18)
     }
+
     val sc: Scene = new Scene(600, 600) {
       root = new VBox {
         _root =>
@@ -96,28 +98,24 @@ object SPM extends JFXApp {
                 DB.login(username)
               )
               f.onSuccess { case passwordAdmin => {
+                // reset variables to default
+                Platform.runLater {
+                  passwordField.text = ""
+                  progressBar.visible = false
+                  _root.disable = false
+                }
+
                 if (passwordAdmin != null) {
                   val (password, admin) = (passwordAdmin._1, passwordAdmin._2)
 
-                  println(s"$passwordAdmin and $admin")
                   if (password == passwordField.text.value) Platform.runLater {
                     stage.hide()
                     stage.scene = Session(username, admin)
                     stage.title = "Choose Project"
                     stage.show()
                   }
-                  else Platform.runLater {
-                    msgLabel.text = "Your password is incorrect. Please re-enter your password"
-                    passwordField.text = ""
-                    progressBar.visible = false
-                    _root.disable = false
-                  }
-                } else Platform.runLater {
-                  msgLabel.text = "That username doesnt exist"
-                  passwordField.text = ""
-                  progressBar.visible = false
-                  _root.disable = false
-                }
+                  else Platform.runLater(msgLabel.text = "Your password is incorrect. Please re-enter your password")
+                } else Platform.runLater(msgLabel.text = "That username doesnt exist")
               }
               } // query on success
             } // button action event

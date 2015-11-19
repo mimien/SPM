@@ -1,29 +1,34 @@
-package scenes
+package com.mimien.scenes
 
-import scalafx.event.ActionEvent
-import scalafx.scene.control.{MenuBar, MenuItem, Menu}
-import scalafx.scene.input.KeyCombination
+import com.mimien.SPM
+
 import scalafx.Includes._
+import scalafx.event.ActionEvent
+import scalafx.scene.control.{Menu, MenuBar, MenuItem}
+import scalafx.scene.input.KeyCombination
 
 /**
   * @author emiliocornejo
   * @version 19/11/15
   *          @(#)CreateMenus.scala
   */
-abstract class CreateMenus {
+object Create {
 
   // menu lists: File, Edit
-  val fileMenu = new Menu("File") {
+  private val fileMenu = new Menu("User") {
     items = List(
-      new MenuItem("New Project") {
-        accelerator = KeyCombination.keyCombination("Ctrl +N")
+      new MenuItem("Log out") {
+        accelerator = KeyCombination.keyCombination("Ctrl+Alt+L")
         onAction = (e: ActionEvent) => {
+          SPM.stage.hide
+          SPM.stage.scene = SPM.View.sc
+          SPM.stage.show
         }
       }
     )
   }
 
-  val editMenu = new Menu("Edit") {
+  private val editMenu = new Menu("Edit") {
     items = List(
       new MenuItem("Cut"),
       new MenuItem("Copy"),
@@ -31,7 +36,7 @@ abstract class CreateMenus {
     )
   }
 
-  val createMenus = new MenuBar {
+  val menus = new MenuBar {
     useSystemMenuBar = true
     menus = List(fileMenu, editMenu)
   }

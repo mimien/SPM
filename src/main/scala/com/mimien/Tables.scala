@@ -1,3 +1,5 @@
+package com.mimien
+
 import slick.lifted.{Rep, Tag}
 
 import DB.dbConfig.driver.api._

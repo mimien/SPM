@@ -1,7 +1,6 @@
-package scenes
+package com.mimien.scenes
 
 import scalafx.scene.Scene
-import scalafx.scene.layout.{VBox, BorderPane}
 
 /**
   * @author emiliocornejo
@@ -11,12 +10,12 @@ import scalafx.scene.layout.{VBox, BorderPane}
 object AdminOptions {
   def apply(user: String): Scene = {
     new Scene(800, 600) {
-      root = new BorderPane {
-        top = new VBox {
-          children = CreateMenus
-        }
-        center = centerPane
-      }
+//      root = new BorderPane {
+//        top = new VBox {
+//          children = CreateMenus
+//        }
+//        center = centerPane
+//      }
     }
   }
 
