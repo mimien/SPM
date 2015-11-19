@@ -20,31 +20,13 @@ import scalafx.scene.text.{Font, FontWeight}
 object SPM extends JFXApp {
 
 
-  def chooseProject = {
-    new VBox {
-      alignment = Pos.Center
-      children = List(
-        new Label {
-          text = "Welcome!"
-          font = new Font("Helvetica", 22)
-        }
-      )
-    }
-  }
+  stage = View.login
 
-  /*
-  * Primary stage: Log in
-  * */
-  stage = new PrimaryStage {
-    title = "Software Project Management"
-    scene = View.scene
-  }
-
-  private object View {
+  object View {
     // error message hidden
     val msgLabel = new Label {
       textFill = Color.Red
-      font = Font.font("Helvetica", FontWeight.ExtraLight, 12)
+      font = Font.font("Helvetica", FontWeight.ExtraLight, 14)
     }
 
     val usernameField = new TextField {
@@ -79,9 +61,8 @@ object SPM extends JFXApp {
       text = "Sign in to get started"
       font = Font.font("Helvetica", FontWeight.Thin, 18)
     }
-    val scene = new Scene(800, 600) {
-      root = new VBox {
-        _root =>
+    val sc: Scene = new Scene(600, 600) {
+      root = new VBox { _root =>
         spacing = 10
         padding = Insets(20)
         alignment = Pos.Center
@@ -102,13 +83,23 @@ object SPM extends JFXApp {
             onAction = (ae: ActionEvent) => {
               progressBar.visible = true
               _root.disable = true
-
+              val username = usernameField.text.value.toLowerCase
               // get user password from database through future
               implicit val ec = ExecutionContext.global
-              val passwordQuery: Future[String] = Future(DB.checkPassword(usernameField.text.value.toLowerCase))
+              val passwordQuery: Future[String] = Future(
+                DB.checkPassword(username)
+              )
               passwordQuery.onSuccess {
                 case password =>
-                  if (password == passwordField.text.value) root = chooseProject
+                  if (password == passwordField.text.value) {
+                    Platform.runLater {
+                      stage.hide()
+                      stage.scene = Session.user(username)
+                      stage.title = "Choose Project"
+                      stage.show()
+
+                    }
+                  }
                   else {
                     val msg: String = if (password == null) "That username doesnt exist"
                     else "Your password is incorrect. Please re-enter your password"
@@ -125,5 +116,13 @@ object SPM extends JFXApp {
         ) // children list
       } // root
     } // scene
+
+    /*
+* Primary stage: Log in
+* */
+    val login = new PrimaryStage {
+      title = "Software Project Management"
+      scene = sc
+    }
   }
 }
