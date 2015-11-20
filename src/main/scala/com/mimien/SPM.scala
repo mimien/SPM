@@ -30,6 +30,23 @@ object SPM extends JFXApp {
 
   object View {
     // error message hidden
+
+    val logoImg = new ImageView {
+      image = new Image(
+        this.getClass.getResourceAsStream("/images/logo.png"))
+      margin = Insets(0, 0, 20, 0)
+    }
+
+    val titleLabel = new Label {
+      text = "Software Project Management"
+      font = Font.font("Helvetica", FontWeight.ExtraLight, 32)
+    }
+
+    val sbtitleLabel = new Label {
+      text = "Sign in to get started"
+      font = Font.font("Helvetica", FontWeight.Thin, 18)
+    }
+
     val msgLabel = new Label {
       textFill = Color.Red
       font = Font.font("Helvetica", FontWeight.ExtraLight, 14)
@@ -52,25 +69,8 @@ object SPM extends JFXApp {
       visible = false
     }
 
-    val logoImg = new ImageView {
-      image = new Image(
-        this.getClass.getResourceAsStream("/images/logo.png"))
-      margin = Insets(0, 0, 20, 0)
-    }
-
-    val titleLabel = new Label {
-      text = "Software Project Management"
-      font = Font.font("Helvetica", FontWeight.ExtraLight, 32)
-    }
-
-    val sbtitleLabel = new Label {
-      text = "Sign in to get started"
-      font = Font.font("Helvetica", FontWeight.Thin, 18)
-    }
-
     val sc: Scene = new Scene(600, 600) {
-      root = new VBox {
-        _root =>
+      root = new VBox { _root =>
         spacing = 10
         padding = Insets(20)
         alignment = Pos.Center

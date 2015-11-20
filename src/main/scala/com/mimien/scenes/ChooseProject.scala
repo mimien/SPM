@@ -3,13 +3,15 @@ package com.mimien.scenes
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 
+import com.mimien.SPM
+
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
 import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, StackPane, VBox}
+import scalafx.scene.layout.{StackPane, VBox}
 import scalafx.scene.text.Font
 
 /**
@@ -20,8 +22,8 @@ import scalafx.scene.text.Font
 object ChooseProject {
   def apply(user: String): Scene = {
 
-    val welcomeLabel = new Label {
-      text = s"Welcome $user!"
+    val msgLabel = new Label {
+      text = "Choose a Project!"
       font = new Font("Helvetica", 22)
     }
 
@@ -46,15 +48,11 @@ object ChooseProject {
     }
 
     val centerPane = new VBox {
+      SPM.stage.title = s"Welcome $user!"
       alignment = Pos.Center
-      children = List(welcomeLabel, listPane, startPjBtn)
+      children = List(msgLabel, listPane, startPjBtn)
     }
 
-    new Scene(800, 600) {
-      root = new BorderPane {
-        top = new VBox(children = Create.menus)
-        center = centerPane
-      }
-    }
+    Menu.layout(centerPane)
   }
 }

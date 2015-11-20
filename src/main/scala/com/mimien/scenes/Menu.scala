@@ -4,15 +4,17 @@ import com.mimien.SPM
 
 import scalafx.Includes._
 import scalafx.event.ActionEvent
+import scalafx.scene.Scene
 import scalafx.scene.control.{Menu, MenuBar, MenuItem}
 import scalafx.scene.input.KeyCombination
+import scalafx.scene.layout.{BorderPane, Pane}
 
 /**
   * @author emiliocornejo
   * @version 19/11/15
   *          @(#)CreateMenus.scala
   */
-object Create {
+object Menu {
 
   // menu lists: File, Edit
   private val fileMenu = new Menu("User") {
@@ -37,7 +39,14 @@ object Create {
   }
 
   val menus = new MenuBar {
-    useSystemMenuBar = true
     menus = List(fileMenu, editMenu)
   }
+
+  def layout(centerPane: Pane) = new Scene(800, 600) {
+    root = new BorderPane {
+      top = Menu.menus
+      center = centerPane
+    }
+  }
+
 }

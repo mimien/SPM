@@ -11,9 +11,7 @@ import scalafx.scene.Scene
 object Session {
 
   def apply(name: String, isAdmin: Boolean): Scene = {
-    if (isAdmin) {
-
-    }
-    ChooseProject(name)
+    if (isAdmin) AdminOptions(name)
+    else ChooseProject(name)
   }
 }

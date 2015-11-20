@@ -11,15 +11,15 @@ import DB.dbConfig.driver.api._
  */
 
 
-case class User(id: Int, name: String, password: String, admin: Boolean)
+case class User(name: String, password: String, admin: Boolean = false, id: Option[Int] = None)
 
 class Users(tag: Tag) extends Table[User](tag, "USERS") {
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
-  def * = (id, name, password, admin) <>(User.tupled, User.unapply)
+  def * = (name, password, admin, id) <>(User.tupled, User.unapply)
 
   // Auto Increment the id primary key column
-  def id: Rep[Int] = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+  def id: Rep[Option[Int]] = column[Option[Int]]("ID", O.PrimaryKey, O.AutoInc)
 
   def name: Rep[String] = column[String]("NAME") // can't be null
 
@@ -29,16 +29,14 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
 }
 
-case class Project(id: Int, name: String)
+case class Project(name: String, id: Option[Int] = None)
 
 class Projects(tag: Tag) extends Table[Project](tag, "project") {
 
-  def * = (id, name) <>(Project.tupled, Project.unapply) // * projection
+  def * = (name, id) <>(Project.tupled, Project.unapply) // * projection
 
-  def id: Rep[Int] = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+  def id: Rep[Option[Int]] = column[Option[Int]]("ID", O.PrimaryKey, O.AutoInc)
 
   def name: Rep[String] = column[String]("NAME")
-
-  def password: Rep[String] = column[String]("PASSWORD")
 }
 
