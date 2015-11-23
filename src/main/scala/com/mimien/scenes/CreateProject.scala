@@ -1,13 +1,14 @@
 package com.mimien.scenes
 
-import com.mimien.DB
+import com.mimien.{SPM, DB}
 
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
-import scalafx.scene.control.{Button, Label, ListView, TextField}
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control._
 import scalafx.scene.layout.{HBox, StackPane, VBox}
 
 /**
@@ -57,18 +58,50 @@ object CreateProject {
 
     val addBtn = new Button(">") {
       onAction = { e: ActionEvent =>
+
         val item = usersList1.getSelectionModel.getSelectedItem
-        if (item == null)
-        usersList1.getItems.remove(item)
-        usersList2.getItems.add(item)
+
+        if (item == null) new Alert(AlertType.Error) {
+          headerText = "Select a user from the left first to add him to the project"
+        }.showAndWait()
+        else {
+          usersList1.getItems.remove(item)
+          usersList2.getItems.add(item)
+        }
       }
     }
 
     val removeBtn = new Button("<") {
       onAction = { e: ActionEvent =>
         val item = usersList2.getSelectionModel.getSelectedItem
-        usersList2.getItems.remove(item)
-        usersList1.getItems.add(item)
+
+        if (item == null) new Alert(AlertType.Error) {
+          headerText = "Select a user from the right first to remove him from the project"
+        }.showAndWait()
+        else {
+          usersList2.getItems.remove(item)
+          usersList1.getItems.add(item)
+        }
+      }
+    }
+
+    val createBtn = new Button("Create") {
+      onAction = { e: ActionEvent =>
+        if (pjNameField.text.value == "") {//FIXME add implict methods to this class too
+          new Alert(AlertType.Error) {
+            headerText = "Do not leave fields on blank"
+          }.showAndWait()
+        } else if (usersList2.getItems.isEmpty) {
+          new Alert(AlertType.Error) {
+            headerText = "Add a user to the project first"
+          }.showAndWait()
+        } else {
+          println(usersList2.getItems)
+          println(usersList2.getItems.toList)
+          SPM.stage.hide()
+          SPM.stage.scene = AdminOptions("emilio") // FIXME
+          SPM.stage.show()
+        }
       }
     }
 
@@ -83,7 +116,7 @@ object CreateProject {
       spacing = 20
       padding = Insets(30)
       alignment = Pos.Center
-      children = List(pjNameHBox, usersHBox)
+      children = List(pjNameHBox, usersHBox, createBtn)
     }
     Menu.layout(centerPane)
   }

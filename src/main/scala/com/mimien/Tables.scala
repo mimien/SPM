@@ -47,12 +47,11 @@ class ProjectsUsers(tag: Tag) extends Table[ProjectUser](tag, "PROJECTS_USERS") 
 
   def * = (projectId, userId) <>(ProjectUser.tupled, ProjectUser.unapply) // * projection
 
-  def projectId: Rep[Option[Int]] = column[Int]("PROJECT_ID")
+  def projectId: Rep[Option[Int]] = column[Int]("PROJECT_ID", O.PrimaryKey)
 
-  def userId: Rep[Option[Int]] = column[Int]("USER_ID", O.PrimaryKey)
+  def userId: Rep[Option[Int]] = column[Int]("USER_ID")
 
   def project = foreignKey("PROJECT_FK", projectId, TableQuery[Projects])(_.id)
 
   def user = foreignKey("USER_FK", userId, TableQuery[Users])(_.id)
-
 }

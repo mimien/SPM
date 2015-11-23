@@ -49,7 +49,6 @@ object AdminOptions {
       }
     }
 
-
     val editPjBtn = new Button("Edit Project") {
       prefHeight = 35
       maxWidth = 200
