@@ -31,7 +31,7 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
 case class Project(name: String, id: Option[Int] = None)
 
-class Projects(tag: Tag) extends Table[Project](tag, "project") {
+class Projects(tag: Tag) extends Table[Project](tag, "PROJECT") {
 
   def * = (name, id) <>(Project.tupled, Project.unapply) // * projection
 
@@ -40,3 +40,19 @@ class Projects(tag: Tag) extends Table[Project](tag, "project") {
   def name: Rep[String] = column[String]("NAME")
 }
 
+
+case class ProjectUser(project: Option[Int], user: Option[Int])
+
+class ProjectsUsers(tag: Tag) extends Table[ProjectUser](tag, "PROJECTS_USERS") {
+
+  def * = (projectId, userId) <>(ProjectUser.tupled, ProjectUser.unapply) // * projection
+
+  def projectId: Rep[Option[Int]] = column[Int]("PROJECT_ID")
+
+  def userId: Rep[Option[Int]] = column[Int]("USER_ID", O.PrimaryKey)
+
+  def project = foreignKey("PROJECT_FK", projectId, TableQuery[Projects])(_.id)
+
+  def user = foreignKey("USER_FK", userId, TableQuery[Users])(_.id)
+
+}

@@ -24,6 +24,8 @@ object SPM extends JFXApp {
   * Primary stage: Log in
   * */
   stage = new PrimaryStage {
+    minWidth = 400
+    minHeight = 400
     title = "Software Project Management"
     scene = View.sc
   }
@@ -115,7 +117,8 @@ object SPM extends JFXApp {
                     stage.show()
                   }
                   else Platform.runLater(msgLabel.text = "Your password is incorrect. Please re-enter your password")
-                } else Platform.runLater(msgLabel.text = "That username doesnt exist")
+                }
+                else Platform.runLater(msgLabel.text = "That username doesnt exist")
               }
               } // query on success
             } // button action event

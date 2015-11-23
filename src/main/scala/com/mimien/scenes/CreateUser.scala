@@ -54,9 +54,7 @@ object CreateUser {
           new Alert(AlertType.Error) {
             headerText = "Password do not match"
           }.showAndWait()
-        } else {
-          DB.insertUser(usernameField.text.value, pswd2Field.text.value)
-        }
+        } else DB.insertUser(usernameField.text.value, pswd2Field.text.value)
       }
     }
 

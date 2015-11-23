@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   *          @(#)DB.scala
   */
 object DB {
-  private  val dbConfig = DatabaseConfig.forConfig[JdbcProfile]("postgres")
+  val dbConfig = DatabaseConfig.forConfig[JdbcProfile]("postgres")
 
   private val db = dbConfig.db
 
@@ -33,8 +33,8 @@ object DB {
   private val create: DBIO[Unit] = (users.schema ++ projects.schema).create
   private val insertUsers = users.map { u => (u.name, u.password, u.admin) } ++= Seq(("emilio", "cornejo", true), ("admin", "root", true))
   private val createIfNotExist = tablesExist.flatMap(exist => if (!exist) create else DBIO.successful())
-  private val listUsers: DBIO[Seq[String]] = users.map(_.name).result
-  private val future = db.run(listUsers)
+  private val allUsers: DBIO[Seq[String]] = users.map(_.name).result
+  private val future = db.run(allUsers)
 
   def awaitAndPrint[T](a: Awaitable[T])(implicit ec: ExecutionContext) = println(await(a))
 
@@ -54,5 +54,5 @@ object DB {
    */
   def insertUser(name: String, password: String) = await(db.run(users += User(name, password)))
 
-  awaitAndPrint(future)
+  def listUsers = await(future)
 }
