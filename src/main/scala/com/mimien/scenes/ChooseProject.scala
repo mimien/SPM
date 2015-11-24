@@ -3,7 +3,7 @@ package com.mimien.scenes
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 
-import com.mimien.SPM
+import com.mimien.{DB, SPM}
 
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
@@ -37,13 +37,14 @@ object ChooseProject {
         }
         maxWidth = 200
         maxHeight = 200
-        items = ObservableBuffer("Project 1", "Project 2")
+        val userProjects = DB.listUserProjects("emilio")
+        println(userProjects)
+        items = ObservableBuffer(userProjects.map(_.name))
       }
     }
 
     val startPjBtn = new Button("Start") {
       onAction = { e: ActionEvent =>
-        println(e.eventType + " occurred on Button")
       }
     }
 

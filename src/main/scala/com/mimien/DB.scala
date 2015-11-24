@@ -38,6 +38,7 @@ object DB {
   private val allUsers: DBIO[Seq[String]] = users.map(_.name).result
   private val allProjects: DBIO[Seq[String]] = projects.map(_.name).result
   private val future = db.run(allUsers)
+//  private val future = db.run(create >> insertUsers >> allUsers)
 
   awaitAndPrint(future)
 
@@ -61,21 +62,20 @@ object DB {
 
   def listUsers = await(db.run(allUsers))
 
-  def listUserProjects(user: String) = {
-    val qUserId = users.filter(_.name === user).map { u => u.id }
-    val userId = await(db.run(qUserId.result))
-//    projectsUsers.filter(_.userId == userId).map { up => up. }
+  def listUserProjects(user: String): Seq[Project] = {
+    val queryUId = users.filter(_.name === user).map { u => u.id }
+    val userId = await(db.run(queryUId.result)).head
+    val queryprojects = projectsUsers.filter(_.userId === userId).flatMap { up => up.project }
+    await(db.run(queryprojects.result))
   }
 
   def addProject(name: String) = await(db.run(projects += Project(name)))
 
-  def relateProjectUser(projectname: String, username: String): Unit = {
-    val qProjectId = projects.filter(_.name === projectname).map { p => p.id }
-    val qUserId = users.filter(_.name === username).map { u => u.id }
-    val projectId = await(db.run(qProjectId.result))
-    val userId = await(db.run(qUserId.result))
-    projectsUsers += ProjectUser(projectId.head, userId.head)
+  def relateProjectUser(projectname: String, username: String) = {
+    val queryPId = projects.filter(_.name === projectname).map { p => p.id }
+    val queryUId = users.filter(_.name === username).map { u => u.id }
+    val projectId = await(db.run(queryPId.result))
+    val userId = await(db.run(queryUId.result))
+    await(db.run(projectsUsers += ProjectUser(projectId.head, userId.head)))
   }
-
-
 }

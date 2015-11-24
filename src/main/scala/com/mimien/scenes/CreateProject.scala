@@ -96,8 +96,11 @@ object CreateProject {
             headerText = "Add a user to the project first"
           }.showAndWait()
         } else {
-          println(usersList2.getItems)
-          println(usersList2.getItems.toList)
+          val projectName = pjNameField.text.value
+          val result = DB.addProject(projectName)
+          println(result)
+          val users = usersList2.getItems.toSeq
+          for (u <- users) DB.relateProjectUser(projectName, u)
           SPM.stage.hide()
           SPM.stage.scene = AdminOptions("emilio") // FIXME
           SPM.stage.show()

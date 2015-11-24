@@ -31,7 +31,7 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
 case class Project(name: String, id: Option[Int] = None)
 
-class Projects(tag: Tag) extends Table[Project](tag, "PROJECT") {
+class Projects(tag: Tag) extends Table[Project](tag, "PROJECTS") {
 
   def * = (name, id) <>(Project.tupled, Project.unapply) // * projection
 
@@ -47,7 +47,7 @@ class ProjectsUsers(tag: Tag) extends Table[ProjectUser](tag, "PROJECTS_USERS") 
 
   def * = (projectId, userId) <>(ProjectUser.tupled, ProjectUser.unapply) // * projection
 
-  def projectId: Rep[Option[Int]] = column[Int]("PROJECT_ID", O.PrimaryKey)
+  def projectId: Rep[Option[Int]] = column[Int]("PROJECT_ID")
 
   def userId: Rep[Option[Int]] = column[Int]("USER_ID")
 
