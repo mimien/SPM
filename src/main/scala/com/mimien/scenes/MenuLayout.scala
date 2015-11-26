@@ -7,7 +7,7 @@ import scalafx.event.ActionEvent
 import scalafx.scene.Scene
 import scalafx.scene.control.{Menu, MenuBar, MenuItem}
 import scalafx.scene.input.KeyCombination
-import scalafx.scene.layout.{BorderPane, Pane}
+import scalafx.scene.layout.{Region, BorderPane, Pane}
 
 /**
   * @author emiliocornejo
@@ -15,7 +15,7 @@ import scalafx.scene.layout.{BorderPane, Pane}
   *          @(#)CreateMenus.scala
   */
 object MenuLayout {
-  def apply(centerPane: Pane, user: User): Scene = {
+  def apply(centerPane: Region, user: User): Scene = {
 
     // Redirect
     val logoutMenu = new MenuItem("Log out") {

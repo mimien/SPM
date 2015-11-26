@@ -3,13 +3,14 @@ package com.mimien.scenes
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 
-import com.mimien.{Project, DB, User}
+import com.mimien.{SPM, Project, DB, User}
 
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
+import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
 import scalafx.scene.layout.{StackPane, VBox}
 import scalafx.scene.text.Font
@@ -27,19 +28,26 @@ object ChooseProject {
       font = new Font("Helvetica", 22)
     }
 
+    val projectsList = new ListView[Project] {
+      maxWidth = 200
+      maxHeight = 200
+      val userProjects = DB.listUserProjects(user id)
+      items = ObservableBuffer(userProjects)
+    }
+
     val listPane = new StackPane {
       padding = Insets(20)
-      children = new ListView[Project] {
-        maxWidth = 200
-        maxHeight = 200
-        val userProjects = DB.listUserProjects(user id)
-        items = ObservableBuffer(userProjects)
-      }
+      children = projectsList
     }
 
     val startPjBtn = new Button("Start") {
       defaultButton = true
       onAction = { e: ActionEvent =>
+        val project = projectsList.getSelectionModel.getSelectedItem
+        if (project == null) new Alert(AlertType.Error) {
+          headerText = "Select a project first"
+        }.showAndWait()
+        else SPM.changeSceneTo(ManageProject(project, user), "Project - " + project.name)
       }
     }
 

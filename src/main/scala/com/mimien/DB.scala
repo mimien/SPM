@@ -1,5 +1,6 @@
 package com.mimien
 
+import com.mimien.scenes.ManageProject.FileTable
 import slick.backend.DatabaseConfig
 import slick.driver.JdbcProfile
 import slick.jdbc.meta.MTable
@@ -7,6 +8,7 @@ import slick.jdbc.meta.MTable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
+import scalafx.collections.ObservableBuffer
 
 /**
   * @author emiliocornejo
@@ -14,6 +16,7 @@ import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
   *          @(#)DB.scala
   */
 object DB {
+
   val dbConfig = DatabaseConfig.forConfig[JdbcProfile]("postgres")
 
   // imports all the DSL goodies for the configured database
@@ -27,25 +30,24 @@ object DB {
 
   private val projectsUsers = TableQuery[ProjectsUsers] // query interface for ProjectsUsers table
 
+  private val files = TableQuery[Files] // query interface for Files table
+
   private val tablesExist: DBIO[Boolean] = MTable.getTables.map { tables =>
     val names = Vector("USERS", "PROJECTS", "PROJECTS_USERS")
-    //
-    val bool = names.intersect(tables.map(_.name.name)) == names
-    println("hola")
-    bool
+    names.intersect(tables.map(_.name.name)) == names
   }
-  private val create: DBIO[Unit] = (users.schema ++ projects.schema ++ projectsUsers.schema).create
+  private val create: DBIO[Unit] = (users.schema ++ projects.schema ++ projectsUsers.schema ++ files.schema).create
   private val insertUsers = users.map { u => (u.name, u.password, u.admin) } ++= Seq(("emilio", "cornejo", true), ("admin", "root", true))
   private val allUsers: DBIO[Seq[String]] = users.map(_.name).result
   private val createIfNotExist: DBIO[Unit] = tablesExist.flatMap { exist => if (exist) DBIO.seq(create, insertUsers) else DBIO.successful() }
   private val future = db.run(allUsers)
-  //  private val future = db.run(create >> insertUsers >> allUsers)
+//    private val future = db.run(create >> insertUsers >> allUsers)
 
   awaitAndPrint(future)
 
   def awaitAndPrint[T](a: Awaitable[T])(implicit ec: ExecutionContext) = println(await(a))
 
-  // selects user where username equals given
+  // selects user where user name equals given name
   def login(name: String): User = {
     val query = users.filter(_.name === name)
     val action = query.result
@@ -53,14 +55,14 @@ object DB {
     await(future).headOption.orNull
   }
 
+  def await[T](a: Awaitable[T])(implicit ec: ExecutionContext) = Await.result(a, Duration.Inf)
+
   /** insert user to database
     * admin privileges are false for default
     * */
   def insertUser(name: String, password: String) = await(db.run(users += User(name, password)))
 
   def listUsers = await(db.run(users.result))
-
-  def await[T](a: Awaitable[T])(implicit ec: ExecutionContext) = Await.result(a, Duration.Inf)
 
   def listUserProjects(userId: Option[Int]): Seq[Project] = {
     val queryprojects = projectsUsers.filter(_.userId === userId).flatMap { up => up.project }
@@ -73,4 +75,10 @@ object DB {
   def relateProjectUser(projectId: Option[Int], userId: Option[Int]) = {
     await(db.run(projectsUsers += ProjectUser(projectId, userId)))
   }
+
+  def getFilesFrom(project: Project): Seq[File] = {
+    val queryFiles = files.filter(_.projectId === project.id)
+    await(db.run(queryFiles.result))
+  }
+
 }
