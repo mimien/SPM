@@ -1,12 +1,12 @@
 package com.mimien.scenes
 
-import com.mimien.{User, SPM}
+import com.mimien.{SPM, User}
 
 import scalafx.Includes._
 import scalafx.event.ActionEvent
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
-import scalafx.scene.control.{Label, Button}
+import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.VBox
 import scalafx.scene.text.Font
 
@@ -51,7 +51,6 @@ object AdminOptions {
       prefHeight = 35
       maxWidth = 200
       onAction = { e: ActionEvent =>
-        SPM.changeSceneTo(CreateUser(user))
       }
     }
     val centerPane = new VBox {

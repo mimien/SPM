@@ -17,6 +17,7 @@ import scalafx.scene.layout.{BorderPane, Pane}
 object MenuLayout {
   def apply(centerPane: Pane, user: User): Scene = {
 
+    // Redirect
     val logoutMenu = new MenuItem("Log out") {
       accelerator = KeyCombination.keyCombination("Ctrl+Alt+L")
       onAction = (e: ActionEvent) => {
@@ -24,13 +25,14 @@ object MenuLayout {
       }
     }
 
+    // Redirect
     val adminMenu = new MenuItem("Admin Options") {
       accelerator = KeyCombination.keyCombination("Ctrl+Alt+O")
       onAction = (e: ActionEvent) => {
         SPM.changeSceneTo(AdminOptions(user))
       }
 
-      // disable if the user is not admin or the currente scene is admin options
+      // disable if the user is not admin or if the currente scene is admin options
       disable = user.isNotAdmin || centerPane.getId == "admin"
     }
 
@@ -46,13 +48,13 @@ object MenuLayout {
       )
     }
 
-    val menus = new MenuBar {
+    val bar = new MenuBar {
       menus = List(userMenu, editMenu)
     }
 
     new Scene(800, 600) {
       root = new BorderPane {
-        top = menus
+        top = bar
         center = centerPane
       }
     }

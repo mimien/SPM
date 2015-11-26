@@ -3,7 +3,7 @@ package com.mimien.scenes
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 
-import com.mimien.{DB, User}
+import com.mimien.{Project, DB, User}
 
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
@@ -29,20 +29,16 @@ object ChooseProject {
 
     val listPane = new StackPane {
       padding = Insets(20)
-      children = new ListView[String] {
-        onMouseClicked = new EventHandler[MouseEvent] {
-          override def handle(event: MouseEvent): Unit = {
-          }
-        }
+      children = new ListView[Project] {
         maxWidth = 200
         maxHeight = 200
         val userProjects = DB.listUserProjects(user id)
-        println(userProjects)
-        items = ObservableBuffer(userProjects.map(_.name))
+        items = ObservableBuffer(userProjects)
       }
     }
 
     val startPjBtn = new Button("Start") {
+      defaultButton = true
       onAction = { e: ActionEvent =>
       }
     }

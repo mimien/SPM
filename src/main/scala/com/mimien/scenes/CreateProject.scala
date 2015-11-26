@@ -35,7 +35,7 @@ object CreateProject {
       children = List(pjNameLabel, pjNameField)
     }
 
-    val usersList1 = new ListView[String] {
+    val usersList1 = new ListView[User] {
       maxWidth = 200
       maxHeight = 200
       items = ObservableBuffer(DB.listUsers)
@@ -46,7 +46,7 @@ object CreateProject {
       children = usersList1
     }
 
-    val usersList2 = new ListView[String] {
+    val usersList2 = new ListView[User] {
       maxWidth = 200
       maxHeight = 200
     }
@@ -86,6 +86,7 @@ object CreateProject {
     }
 
     val createBtn = new Button("Create") {
+      defaultButton = true
       onAction = { e: ActionEvent =>
         if (pjNameField.text.value == "") {//FIXME add implict methods to this class too
           new Alert(AlertType.Error) {
@@ -98,19 +99,29 @@ object CreateProject {
         } else {
           val projectName = pjNameField.text.value
           val projectId = DB.addProject(projectName)
-          println(projectId.get())
+
+          println(projectId.get)
+
           val users = usersList2.getItems.toSeq
-          for (u <- users) DB.relateProjectUser(Some(projectId.get), u)
+          for (u <- users) DB.relateProjectUser(Some(projectId.get), u.id)
+
           SPM.changeSceneTo(AdminOptions(user))
         }
       }
+    }
+
+    val addRemoveHBox = new VBox {
+      alignment = Pos.Center
+//      padding = Insets(20)
+      spacing = 10
+      children = List(addBtn, removeBtn)
     }
 
     val usersHBox = new HBox {
       alignment = Pos.Center
       padding = Insets(20)
       spacing = 10
-      children = List(usersPane1, addBtn, removeBtn, usersPane2)
+      children = List(usersPane1, addRemoveHBox, usersPane2)
     }
 
     val centerPane = new VBox {

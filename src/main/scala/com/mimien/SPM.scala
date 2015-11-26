@@ -1,9 +1,11 @@
 package com.mimien
 
-import scala.concurrent.{ExecutionContext, Future}
 import scalafx.Includes._
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.{Future, ExecutionContext}
+import scalafx.application.{Platform, JFXApp}
 import scalafx.application.JFXApp.PrimaryStage
-import scalafx.application.{JFXApp, Platform}
 import scalafx.event.ActionEvent
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
@@ -34,10 +36,7 @@ object SPM extends JFXApp {
     stage.show()
   }
 
-  // object View
-
   object View {
-    // error message hidden
 
     val logoImg = new ImageView {
       image = new Image(
@@ -77,54 +76,44 @@ object SPM extends JFXApp {
       visible = false
     }
 
-    /// Primary scene
+    val loginBtn = new Button {
+      text = "Enter"
+      defaultButton = true
+      prefHeight = 35
+      font = Font.font("Helvetica", FontWeight.Thin, 18)
+      maxWidth = 250
+    }
+
     val login: Scene = new Scene(600, 600) {
-      root = new VBox {
-        _root =>
+      root = new VBox { _root =>
         spacing = 10
         padding = Insets(20)
         alignment = Pos.Center
-        children = List(
-          logoImg,
-          titleLabel,
-          sbtitleLabel,
-          msgLabel,
-          progressBar,
-          usernameField,
-          passwordField,
-          new Button {
-            text = "Enter"
-            defaultButton = true
-            prefHeight = 35
-            font = Font.font("Helvetica", FontWeight.Thin, 18)
-            maxWidth = 250
-            onAction = (ae: ActionEvent) => {
-              progressBar.visible = true
-              _root.disable = true
-              val username = usernameField.text.value.toLowerCase
+        children = List(logoImg, titleLabel, sbtitleLabel, msgLabel, progressBar, usernameField, passwordField, loginBtn)
 
-              implicit val ec = ExecutionContext.global
-              val f: Future[User] = Future(
-                DB.login(username)
-              )
-              f.onSuccess { case user =>
-                // reset variables to default
-                Platform runLater {
-                  passwordField.text = ""
-                  progressBar.visible = false
-                  _root.disable = false
-                }
+        // hookup login button event
+        loginBtn.onAction = (ae: ActionEvent) => {
+          progressBar.visible = true
+          _root.disable = true
 
-                if (user != null) {
-                  if (user.password == passwordField.text.value) Platform runLater Session(user)
-                  else Platform runLater(msgLabel.text = "Your password is incorrect. Please re-enter your password")
-                }
-                else Platform runLater(msgLabel.text = "That username doesnt exist")
-              } // query on success
-            } // button action event
-          } // button
-        ) // children list
+          val username = usernameField.text.value.toLowerCase
+          val f: Future[User] = Future(DB.login(username)) (ExecutionContext.global)
+          f.onSuccess { case user =>
+            // reset control inputs to default
+            Platform runLater {
+              passwordField.text = ""
+              progressBar.visible = false
+              _root.disable = false
+            }
+
+            if (user != null) {
+              if (user.password == passwordField.text.value) Platform runLater Session(user)
+              else Platform runLater (msgLabel.text = "Your password is incorrect. Please re-enter your password")
+            }
+            else Platform runLater (msgLabel.text = "That username doesnt exist")
+          } // query on success
+        } // button action event
       } // root
     } // scene
-  }
+  } // Object View
 }

@@ -13,6 +13,7 @@ import DB.dbConfig.driver.api._
 
 case class User(name: String, password: String, isAdmin: Boolean = false, id: Option[Int] = None) {
   def isNotAdmin = !isAdmin
+  override def toString() = name
 }
 
 class Users(tag: Tag) extends Table[User](tag, "USERS") {
@@ -31,7 +32,9 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
 }
 
-case class Project(name: String, id: Option[Int] = None)
+case class Project(name: String, id: Option[Int] = None) {
+  override def toString() = name
+}
 
 class Projects(tag: Tag) extends Table[Project](tag, "PROJECTS") {
 

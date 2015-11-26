@@ -45,6 +45,7 @@ object CreateUser {
 
 
     val createBtn = new Button("Create") {
+      defaultButton = true
       onAction = { e: ActionEvent =>
         if (usernameField.isEmpty || passwordField.isEmpty || pswd2Field.isEmpty) new Alert(AlertType.Error) {
           headerText = "Do not leave fields on blank"
