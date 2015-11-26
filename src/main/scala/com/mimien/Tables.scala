@@ -11,7 +11,9 @@ import DB.dbConfig.driver.api._
  */
 
 
-case class User(name: String, password: String, admin: Boolean = false, id: Option[Int] = None)
+case class User(name: String, password: String, isAdmin: Boolean = false, id: Option[Int] = None) {
+  def isNotAdmin = !isAdmin
+}
 
 class Users(tag: Tag) extends Table[User](tag, "USERS") {
   // the * projection (e.g. select * ...) auto-transforms the tupled

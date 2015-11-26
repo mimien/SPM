@@ -3,7 +3,7 @@ package com.mimien.scenes
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 
-import com.mimien.{DB, SPM}
+import com.mimien.{DB, User}
 
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
@@ -20,7 +20,7 @@ import scalafx.scene.text.Font
   *          @(#)Session.scala
   */
 object ChooseProject {
-  def apply(user: String): Scene = {
+  def apply(user: User): Scene = {
 
     val msgLabel = new Label {
       text = "Choose a Project!"
@@ -31,13 +31,12 @@ object ChooseProject {
       padding = Insets(20)
       children = new ListView[String] {
         onMouseClicked = new EventHandler[MouseEvent] {
-          override def handle(event: MouseEvent) {
-
+          override def handle(event: MouseEvent): Unit = {
           }
         }
         maxWidth = 200
         maxHeight = 200
-        val userProjects = DB.listUserProjects("emilio")
+        val userProjects = DB.listUserProjects(user id)
         println(userProjects)
         items = ObservableBuffer(userProjects.map(_.name))
       }
@@ -49,11 +48,10 @@ object ChooseProject {
     }
 
     val centerPane = new VBox {
-      SPM.stage.title = s"Welcome $user!"
       alignment = Pos.Center
       children = List(msgLabel, listPane, startPjBtn)
     }
 
-    Menu.layout(centerPane)
+    MenuLayout(centerPane, user)
   }
 }

@@ -1,6 +1,6 @@
 package com.mimien.scenes
 
-import com.mimien.{SPM, DB}
+import com.mimien.{User, SPM, DB}
 
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
@@ -17,7 +17,7 @@ import scalafx.scene.layout.{HBox, StackPane, VBox}
   *          @(#)CreateProject.scala
   */
 object CreateProject {
-  def apply(): Scene = {
+  def apply(user: User): Scene = {
 
     val pjNameField = new TextField {
       promptText = "Name of the project"
@@ -97,13 +97,11 @@ object CreateProject {
           }.showAndWait()
         } else {
           val projectName = pjNameField.text.value
-          val result = DB.addProject(projectName)
-          println(result)
+          val projectId = DB.addProject(projectName)
+          println(projectId.get())
           val users = usersList2.getItems.toSeq
-          for (u <- users) DB.relateProjectUser(projectName, u)
-          SPM.stage.hide()
-          SPM.stage.scene = AdminOptions("emilio") // FIXME
-          SPM.stage.show()
+          for (u <- users) DB.relateProjectUser(Some(projectId.get), u)
+          SPM.changeSceneTo(AdminOptions(user))
         }
       }
     }
@@ -121,6 +119,6 @@ object CreateProject {
       alignment = Pos.Center
       children = List(pjNameHBox, usersHBox, createBtn)
     }
-    Menu.layout(centerPane)
+    MenuLayout(centerPane, user)
   }
 }

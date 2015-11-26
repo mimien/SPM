@@ -1,8 +1,6 @@
 package com.mimien
 
-import scenes._
-
-import scalafx.scene.Scene
+import com.mimien.scenes._
 /**
   * @author emiliocornejo
   * @version 06/11/15
@@ -10,8 +8,8 @@ import scalafx.scene.Scene
   */
 object Session {
 
-  def apply(name: String, isAdmin: Boolean): Scene = {
-    if (isAdmin) AdminOptions(name)
-    else ChooseProject(name)
+  def apply(user: User) {
+    if (user isAdmin) SPM.changeSceneTo(AdminOptions(user))
+    else SPM.changeSceneTo(ChooseProject(user), s"Welcome ${user name}!")
   }
 }

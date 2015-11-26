@@ -1,6 +1,6 @@
 package com.mimien.scenes
 
-import com.mimien.SPM
+import com.mimien.{User, SPM}
 
 import scalafx.Includes._
 import scalafx.event.ActionEvent
@@ -16,10 +16,10 @@ import scalafx.scene.text.Font
   *          @(#)AdminOptions.scala
   */
 object AdminOptions {
-  def apply(user: String): Scene = {
+  def apply(user: User): Scene = {
 
     val welcomeLabel = new Label {
-      text = s"Welcome $user!"
+      text = s"Welcome ${user name}!"
       font = new Font("Helvetica", 22)
     }
 
@@ -27,9 +27,7 @@ object AdminOptions {
       prefHeight = 35
       maxWidth = 200
       onAction = { e: ActionEvent =>
-        SPM.stage.hide()
-        SPM.stage.scene = ChooseProject(user)
-        SPM.stage.show()
+        SPM.changeSceneTo(ChooseProject(user))
       }
     }
 
@@ -37,7 +35,7 @@ object AdminOptions {
       prefHeight = 35
       maxWidth = 200
       onAction = { e: ActionEvent =>
-        SPM.stage.scene = CreateUser()
+        SPM.changeSceneTo(CreateUser(user))
       }
     }
 
@@ -45,7 +43,7 @@ object AdminOptions {
       prefHeight = 35
       maxWidth = 200
       onAction = { e: ActionEvent =>
-        SPM.stage.scene = CreateProject()
+        SPM.changeSceneTo(CreateProject(user))
       }
     }
 
@@ -53,17 +51,18 @@ object AdminOptions {
       prefHeight = 35
       maxWidth = 200
       onAction = { e: ActionEvent =>
-        SPM.stage.scene = CreateUser()
+        SPM.changeSceneTo(CreateUser(user))
       }
     }
     val centerPane = new VBox {
+      id = "admin"
       spacing = 10
       padding = Insets(20)
       alignment = Pos.Center
       children = List(welcomeLabel, choosePjBtn, createUsrBtn, createPjBtn, editPjBtn)
     }
 
-    Menu.layout(centerPane)
+    MenuLayout(centerPane, user)
   }
 
 }

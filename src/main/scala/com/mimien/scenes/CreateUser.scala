@@ -1,6 +1,6 @@
 package com.mimien.scenes
 
-import com.mimien.{SPM, DB}
+import com.mimien.{User, SPM, DB}
 
 import scalafx.Includes._
 import scalafx.event.ActionEvent
@@ -18,7 +18,7 @@ import scalafx.scene.text.Font
   */
 object CreateUser {
 
-  def apply(): Scene = {
+  def apply(user: User): Scene = {
 
     val msgLabel = new Label {
       text = "Fill the user info"
@@ -54,9 +54,7 @@ object CreateUser {
         }.showAndWait()
         else {
           DB.insertUser(usernameField.text.value, pswd2Field.text.value)
-          SPM.stage.hide()
-          SPM.stage.scene = AdminOptions("emilio") // FIXME
-          SPM.stage.show()
+          SPM.changeSceneTo(AdminOptions(user))
         }
       }
     }
@@ -67,7 +65,7 @@ object CreateUser {
       alignment = Pos.Center
       children = List(msgLabel, usernameField, passwordField, pswd2Field, createBtn)
     }
-    Menu.layout(centerPane)
+    MenuLayout(centerPane, user)
   }
 
   implicit class BetterField(tf: TextField) {

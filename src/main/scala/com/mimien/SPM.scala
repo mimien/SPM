@@ -20,15 +20,21 @@ import scalafx.scene.text.{Font, FontWeight}
   */
 object SPM extends JFXApp {
 
-  /*
-  * Primary stage: Log in
-  * */
   stage = new PrimaryStage {
     minWidth = 400
     minHeight = 400
     title = "Software Project Management"
-    scene = View.sc
+    scene = View.login
   }
+
+  def changeSceneTo(scene: Scene, title: String = "Admin Options"): Unit = {
+    stage.hide()
+    stage.scene = scene
+    stage.title = title
+    stage.show()
+  }
+
+  // object View
 
   object View {
     // error message hidden
@@ -71,8 +77,10 @@ object SPM extends JFXApp {
       visible = false
     }
 
-    val sc: Scene = new Scene(600, 600) {
-      root = new VBox { _root =>
+    /// Primary scene
+    val login: Scene = new Scene(600, 600) {
+      root = new VBox {
+        _root =>
         spacing = 10
         padding = Insets(20)
         alignment = Pos.Center
@@ -94,41 +102,29 @@ object SPM extends JFXApp {
               progressBar.visible = true
               _root.disable = true
               val username = usernameField.text.value.toLowerCase
-              // get user password from database through future
+
               implicit val ec = ExecutionContext.global
-              val f: Future[(String, Boolean)] = Future(
+              val f: Future[User] = Future(
                 DB.login(username)
               )
-              f.onSuccess { case passwordAdmin => {
+              f.onSuccess { case user =>
                 // reset variables to default
-                Platform.runLater {
+                Platform runLater {
                   passwordField.text = ""
                   progressBar.visible = false
                   _root.disable = false
                 }
 
-                if (passwordAdmin != null) {
-                  val (password, admin) = (passwordAdmin._1, passwordAdmin._2)
-
-                  if (password == passwordField.text.value) Platform.runLater {
-                    stage.hide()
-                    stage.scene = Session(username, admin)
-                    stage.title = "Choose Project"
-                    stage.show()
-                  }
-                  else Platform.runLater(msgLabel.text = "Your password is incorrect. Please re-enter your password")
+                if (user != null) {
+                  if (user.password == passwordField.text.value) Platform runLater Session(user)
+                  else Platform runLater(msgLabel.text = "Your password is incorrect. Please re-enter your password")
                 }
-                else Platform.runLater(msgLabel.text = "That username doesnt exist")
-              }
+                else Platform runLater(msgLabel.text = "That username doesnt exist")
               } // query on success
             } // button action event
-          }
+          } // button
         ) // children list
       } // root
-
     } // scene
   }
-
-  // object View
-
 }

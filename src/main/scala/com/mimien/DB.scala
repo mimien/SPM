@@ -45,11 +45,11 @@ object DB {
   def awaitAndPrint[T](a: Awaitable[T])(implicit ec: ExecutionContext) = println(await(a))
 
   // return password and admin boolean of given username
-  def login(name: String): (String, Boolean) = {
+  def login(name: String): User = {
     // SELECT (password, admin) FROM users WHERE name == (name input)
-    val query = users.filter(_.name === name).map { u => (u.password, u.admin) }
+    val query = users.filter(_.name === name)
     val action = query.result
-    val future: Future[Seq[(String, Boolean)]] = db.run(action)
+    val future: Future[Seq[User]] = db.run(action)
     await(future).headOption.orNull
   }
 
@@ -62,20 +62,16 @@ object DB {
 
   def listUsers = await(db.run(allUsers))
 
-  def listUserProjects(user: String): Seq[Project] = {
-    val queryUId = users.filter(_.name === user).map { u => u.id }
-    val userId = await(db.run(queryUId.result)).head
+  def listUserProjects(userId: Option[Int]): Seq[Project] = {
     val queryprojects = projectsUsers.filter(_.userId === userId).flatMap { up => up.project }
     await(db.run(queryprojects.result))
   }
 
   def addProject(name: String) = await(db.run(projects += Project(name)))
 
-  def relateProjectUser(projectname: String, username: String) = {
-    val queryPId = projects.filter(_.name === projectname).map { p => p.id }
+  def relateProjectUser(projectId: Option[Int], username: String) = {
     val queryUId = users.filter(_.name === username).map { u => u.id }
-    val projectId = await(db.run(queryPId.result))
     val userId = await(db.run(queryUId.result))
-    await(db.run(projectsUsers += ProjectUser(projectId.head, userId.head)))
+    await(db.run(projectsUsers += ProjectUser(projectId, userId.head)))
   }
 }
