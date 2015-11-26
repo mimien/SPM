@@ -1,14 +1,18 @@
 package com.mimien.scenes
 
-import com.mimien.{DB, File, Project, User}
+import com.mimien._
 import slick.model
 import scalafx.Includes._
 import scalafx.beans.property.StringProperty
 import scalafx.collections.ObservableBuffer
 
-import scalafx.event.Event
+import scalafx.event.{ActionEvent, Event}
+import scalafx.geometry.{Insets, Orientation}
+import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.paint.Color
+import scalafx.scene.shape.Circle
 import scalafx.scene.{Node, Scene}
-import scalafx.scene.control.{TableView, TableColumn, Tab, TabPane}
+import scalafx.scene.control._
 import scalafx.scene.layout.{VBox, BorderPane}
 import scalafx.scene.web.WebView
 
@@ -21,10 +25,39 @@ object ManageProject {
 
   def apply(project: Project, user: User): Scene = {
 
+    val toolBar = new ToolBar {
+      content = List(
+        new Button {
+          padding = Insets(4, 4, 4, 4)
+          graphic = new ImageView(new Image(this, "/images/newfile.png"))
+          tooltip = Tooltip("Create File... Ctrl+N")
+          onAction = handle {
+            SPM.changeSceneTo(CreateFile(project, user), "Create File")
+          }
+        },
+        new Button {
+          padding = Insets(4, 4, 4, 4)
+          graphic = new ImageView(new Image(this, "/images/importfile.png"))
+          tooltip = Tooltip("Import File Ctrl+I")
+          onAction = handle {
+            println("New toolbar button clicked")
+          }
+        },
+        new Button {
+          padding = Insets(4, 4, 4, 4)
+          graphic = new ImageView(new Image(this, "/images/reload.png"))
+          tooltip = Tooltip("Reload Ctrl+R")
+          onAction = handle {
+            println("New toolbar button clicked")
+          }
+        }
+      )
+    }
+
     def getFiles: ObservableBuffer[FileTable] = {
       val files = DB.getFilesFrom(project)
       if (files.isEmpty) ObservableBuffer()
-      else ObservableBuffer(files.map(_.asInstanceOf[FileTable]))
+      else ObservableBuffer(files.map { f => new FileTable(f.name, f.format, f.phase) })
     }
 
     val fileTableNode = {
@@ -77,7 +110,13 @@ object ManageProject {
         }
       )
     }
-    MenuLayout(centerPane, user)
+
+    val borderPane = new BorderPane {
+      top = toolBar
+      center = centerPane
+    }
+
+    MenuLayout(borderPane, user)
   }
 
   class FileTable(name: String, format: String, phase: String) extends File(name, format, phase) {

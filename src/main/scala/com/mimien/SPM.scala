@@ -39,8 +39,7 @@ object SPM extends JFXApp {
   object View {
 
     val logoImg = new ImageView {
-      image = new Image(
-        this.getClass.getResourceAsStream("/images/logo.png"))
+      image = new Image(this.getClass.getResourceAsStream("/images/logo.png"))
       margin = Insets(0, 0, 20, 0)
     }
 
@@ -107,7 +106,10 @@ object SPM extends JFXApp {
             }
 
             if (user != null) {
-              if (user.password == passwordField.text.value) Platform runLater Session(user)
+              if (user.password == passwordField.text.value) Platform runLater {
+                Session(user)
+                msgLabel.text = ""
+              }
               else Platform runLater (msgLabel.text = "Your password is incorrect. Please re-enter your password")
             }
             else Platform runLater (msgLabel.text = "That username doesnt exist")

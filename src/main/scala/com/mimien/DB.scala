@@ -62,6 +62,10 @@ object DB {
     * */
   def insertUser(name: String, password: String) = await(db.run(users += User(name, password)))
 
+  def insertFile(name: String, format: String, phase: String, projectId: Option[Int]) = {
+    await(db.run(files += File(name, format, phase, projectId)))
+  }
+
   def listUsers = await(db.run(users.result))
 
   def listUserProjects(userId: Option[Int]): Seq[Project] = {

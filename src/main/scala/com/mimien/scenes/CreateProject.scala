@@ -1,6 +1,7 @@
 package com.mimien.scenes
 
 import com.mimien.{User, SPM, DB}
+import com.mimien.Design._
 
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
@@ -10,6 +11,7 @@ import scalafx.scene.Scene
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
 import scalafx.scene.layout.{HBox, StackPane, VBox}
+import scalafx.scene.text.Font
 
 /**
   * @author emiliocornejo
@@ -19,20 +21,14 @@ import scalafx.scene.layout.{HBox, StackPane, VBox}
 object CreateProject {
   def apply(user: User): Scene = {
 
+    val msgLabel = new Label {
+      text = "Choose the project info"
+      font = new Font("Helvetica", 22)
+    }
+
     val pjNameField = new TextField {
       promptText = "Name of the project"
       maxWidth = 250
-    }
-
-    val pjNameLabel = new Label {
-      text = "Project name:"
-    }
-
-    val pjNameHBox = new HBox {
-      alignment = Pos.Center
-      padding = Insets(20)
-      spacing = 10
-      children = List(pjNameLabel, pjNameField)
     }
 
     val usersList1 = new ListView[User] {
@@ -88,7 +84,7 @@ object CreateProject {
     val createBtn = new Button("Create") {
       defaultButton = true
       onAction = { e: ActionEvent =>
-        if (pjNameField.text.value == "") {//FIXME add implict methods to this class too
+        if (pjNameField.isEmpty) {
           new Alert(AlertType.Error) {
             headerText = "Do not leave fields on blank"
           }.showAndWait()
@@ -112,7 +108,7 @@ object CreateProject {
 
     val addRemoveHBox = new VBox {
       alignment = Pos.Center
-//      padding = Insets(20)
+      //      padding = Insets(20)
       spacing = 10
       children = List(addBtn, removeBtn)
     }
@@ -128,7 +124,7 @@ object CreateProject {
       spacing = 20
       padding = Insets(30)
       alignment = Pos.Center
-      children = List(pjNameHBox, usersHBox, createBtn)
+      children = List(msgLabel, labelInputBox("Project name:", pjNameField), usersHBox, createBtn)
     }
     MenuLayout(centerPane, user)
   }

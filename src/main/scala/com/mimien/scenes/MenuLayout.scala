@@ -36,9 +36,18 @@ object MenuLayout {
       disable = user.isNotAdmin || centerPane.getId == "admin"
     }
 
-    val userMenu = new Menu("User") {
-      items = List(logoutMenu, adminMenu)
+    // Redirect
+    val choosePJMenu = new MenuItem("Choose Project") {
+      accelerator = KeyCombination.keyCombination("Ctrl+Alt+C")
+      onAction = (e: ActionEvent) => {
+        SPM.changeSceneTo(ChooseProject(user), s"Welcome ${user name}")
+      }
     }
+
+    val userMenu = new Menu("User") {
+      items = List(logoutMenu, adminMenu, choosePJMenu)
+    }
+
 
     val editMenu = new Menu("Edit") {
       items = List(

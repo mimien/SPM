@@ -1,6 +1,7 @@
 package com.mimien.scenes
 
 import com.mimien.{User, SPM, DB}
+import com.mimien.Design._
 
 import scalafx.Includes._
 import scalafx.event.ActionEvent
@@ -33,12 +34,12 @@ object CreateUser {
 
     val passwordField = new PasswordField() {
       promptText = "Password"
-      maxWidth = 250
+      maxWidth = 247
       prefHeight = 35
     }
 
     val pswd2Field = new PasswordField() {
-      promptText = "Password"
+      promptText = "Re-enter password"
       maxWidth = 250
       prefHeight = 35
     }
@@ -64,13 +65,14 @@ object CreateUser {
       spacing = 10
       padding = Insets(20)
       alignment = Pos.Center
-      children = List(msgLabel, usernameField, passwordField, pswd2Field, createBtn)
+      children = List(
+        msgLabel,
+        labelInputBox("Username:", usernameField),
+        labelInputBox("Password:", passwordField),
+        labelInputBox("Password:", pswd2Field),
+        createBtn
+      )
     }
     MenuLayout(centerPane, user)
   }
-
-  implicit class BetterField(tf: TextField) {
-    def isEmpty: Boolean = tf.text.value == ""
-  }
-
 }

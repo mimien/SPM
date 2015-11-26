@@ -62,6 +62,8 @@ class ProjectsUsers(tag: Tag) extends Table[ProjectUser](tag, "PROJECTS_USERS") 
 
 case class File(name: String, format: String, phase: String, projectId: Option[Int] = None, id: Option[Int] = None) {
   override def toString = name
+
+  def path = s"src/main/resources/files/$projectId/$name.$format"
 }
 
 class Files(tag: Tag) extends Table[File](tag, "FILES") {

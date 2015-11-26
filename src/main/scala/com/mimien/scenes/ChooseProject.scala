@@ -8,11 +8,14 @@ import com.mimien.{SPM, Project, DB, User}
 import scalafx.Includes._
 import scalafx.collections.ObservableBuffer
 import scalafx.event.ActionEvent
-import scalafx.geometry.{Insets, Pos}
+import scalafx.geometry.{Orientation, Insets, Pos}
 import scalafx.scene.Scene
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
+import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{StackPane, VBox}
+import scalafx.scene.paint.Color
+import scalafx.scene.shape.Circle
 import scalafx.scene.text.Font
 
 /**
@@ -21,6 +24,7 @@ import scalafx.scene.text.Font
   *          @(#)Session.scala
   */
 object ChooseProject {
+
   def apply(user: User): Scene = {
 
     val msgLabel = new Label {
